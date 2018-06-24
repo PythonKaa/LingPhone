@@ -7,6 +7,8 @@
     <string name="lesson">Lesson Screen</string>
     <string name="app_logo_top">Ling@Phone</string>
     <string name="app_logo_bottom">Enjoy learning!</string>
-    <string name="app_version_info">Version 1.0.0\nCopyright © 2018 Alexey McCulov, All Rights Reserved.
-    </string>
+    <string name="app_version_info">Version 1.0.0\nCopyright © 2018 Alexey McCulov, All Rights Reserved.</string>
+    <string name="setting_menu_hint">Preferences</string>
+    <string name="play_menu_hint">Play</string>
+    <string name="pause_menu_hint">Pause</string>
 </resources>

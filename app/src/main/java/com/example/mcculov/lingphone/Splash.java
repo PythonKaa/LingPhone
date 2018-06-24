@@ -32,11 +32,11 @@ public class Splash extends LingActivity {
         TextView logo2 = (TextView) findViewById(R.id.TextViewBottomTitle);
         Animation fade2 = AnimationUtils.loadAnimation(this, R.anim.fade_in2);
         logo2.startAnimation(fade2);
-        // Transition to Main Menu when bottom title finishes animating
+        // Transition to Main when bottom title finishes animating
         fade2.setAnimationListener(new Animation.AnimationListener() {
             public void onAnimationEnd(Animation animation) {
-                // The animation has ended, transition to the Main Menu screen
-                startActivity(new Intent(Splash.this, Menu.class));
+                // The animation has ended, transition to the Main screen
+                startActivity(new Intent(Splash.this, PlayActivity.class));
                 Splash.this.finish();
             }
 
