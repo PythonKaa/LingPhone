@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Ling@Phone</string>
+    <string name="splash">Splash Screen</string>
+    <string name="help">Help Screen</string>
+    <string name="menu">Main Menu Screen</string>
+    <string name="setting">Settings Screen</string>
+    <string name="lesson">Lesson Screen</string>
+    <string name="app_logo_top">Ling@Phone</string>
+    <string name="app_logo_bottom">Enjoy learning!</string>
+    <string name="app_version_info">Version 1.0.0\nCopyright © 2018 Alexey McCulov, All Rights Reserved.
+    </string>
+</resources>
