@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 public class PlayActivity extends AppCompatActivity {
 
+    private int playState = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,11 +27,20 @@ public class PlayActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.play_item:
-                Toast.makeText(this, R.string.play_menu_hint, Toast.LENGTH_SHORT).show();
+                if (playState == 0) {
+                    item.setIcon(R.drawable.ic_pause);
+
+                    Toast.makeText(this, R.string.play_menu_hint, Toast.LENGTH_SHORT).show();
+                    playState = 1;
+                }
+                else {
+                    item.setIcon(R.drawable.ic_play_arrow);
+                    Toast.makeText(this, R.string.pause_menu_hint, Toast.LENGTH_SHORT).show();
+                    playState = 0;
+                }
+
                 return true;
-            case R.id.pause_item:
-                Toast.makeText(this, R.string.pause_menu_hint, Toast.LENGTH_SHORT).show();
-                return true;
+
             case R.id.settings_item:
                 Toast.makeText(this, R.string.setting_menu_hint, Toast.LENGTH_SHORT).show();
                 return true;
