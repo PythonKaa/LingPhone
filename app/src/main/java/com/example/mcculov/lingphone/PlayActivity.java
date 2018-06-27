@@ -4,14 +4,16 @@ import android.media.MediaPlayer;
 import android.os.Handler;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
 
-
-public class PlayActivity extends LingActivity implements MediaPlayer.OnCompletionListener, SeekBar.OnSeekBarChangeListener {
+public class PlayActivity extends LingActivity implements MediaPlayer.OnCompletionListener, SeekBar.OnSeekBarChangeListener/*, ListView.OnClickListener */{
 
     private static final String MEDIA_TIME = "MEDIA_TIME";
     private static final String LESSON_TITLE = "LESSON_TITLE";
@@ -26,8 +28,6 @@ public class PlayActivity extends LingActivity implements MediaPlayer.OnCompleti
 //    private boolean isPlay;
 
     private ImageButton btnPlay;
-    private ImageButton btnForward;
-    private ImageButton btnBackward;
     private SeekBar lessonProgressBar;
     private TextView lessonTitleLabel;
     private TextView lessonCurrentDurationLabel;
@@ -52,8 +52,7 @@ public class PlayActivity extends LingActivity implements MediaPlayer.OnCompleti
 
         // All player buttons
         btnPlay = (ImageButton) findViewById(R.id.btnPlay);
-        btnForward = (ImageButton) findViewById(R.id.btnForward);
-        btnBackward = (ImageButton) findViewById(R.id.btnBackward);
+
         lessonProgressBar = (SeekBar) findViewById(R.id.lessonProgressBar);
         lessonTitleLabel = (TextView) findViewById(R.id.lessonTitle);
         lessonCurrentDurationLabel = (TextView) findViewById(R.id.lessonCurrentDurationLabel);
@@ -75,6 +74,25 @@ public class PlayActivity extends LingActivity implements MediaPlayer.OnCompleti
         } else {
             activityState.restoreFromBundle(savedInstanceState);
         }
+
+        // ListView
+
+        ListView lv = (ListView)findViewById(R.id.lessonText);
+
+        ArrayAdapter<String> adapt = new ArrayAdapter<>(this, R.layout.playlist_item, mp.getText());
+
+        lv.setAdapter(adapt);
+
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+            }
+        });
+
+        ImageView iv = (ImageView) findViewById(R.id.imageView);
+        iv.setVisibility(View.INVISIBLE);
+
 
         // By default play first lesson
         playLesson();
@@ -103,12 +121,14 @@ public class PlayActivity extends LingActivity implements MediaPlayer.OnCompleti
                 }
 
             }
+
         });
 
         /**
          * Forward button click event
          * Forwards lesson specified seconds
          * */
+        ImageButton btnForward = (ImageButton) findViewById(R.id.btnForward);
         btnForward.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -130,6 +150,7 @@ public class PlayActivity extends LingActivity implements MediaPlayer.OnCompleti
          * Backward button click event
          * Backward lesson to specified seconds
          * */
+        ImageButton btnBackward = (ImageButton) findViewById(R.id.btnBackward);
         btnBackward.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -144,7 +165,6 @@ public class PlayActivity extends LingActivity implements MediaPlayer.OnCompleti
                     // backward to starting position
                     mp.seekTo(0);
                 }
-
             }
         });
 

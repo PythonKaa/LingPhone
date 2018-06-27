@@ -3,6 +3,9 @@ package com.example.mcculov.lingphone;
 import android.content.Context;
 import android.media.MediaPlayer;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class PlayLessonManager {
 
     private MediaPlayer mp;
@@ -53,6 +56,29 @@ public class PlayLessonManager {
 
     public void reset() {
         mp.reset();
+    }
+
+    protected void finalize() {
+        mp.release();
+    }
+
+    public List<String> getText() {
+        CourseDefinition cd = TestCourseLoader.LoadCourseDef();
+
+        ArrayList<String> a = new ArrayList<String>();
+
+
+        CourseDefinition.SplittingPhrase sp[] = new CourseDefinition.SplittingPhrase[cd.splittingPhrases.size()];
+        cd.splittingPhrases.toArray(sp);
+
+        String la[] = new String[cd.foreignLang.phrases.size()];
+        la = cd.foreignLang.phrases.toArray(la);
+
+        for (int i = 0; i < cd.splittingPhrases.size()-1; i++) {
+           if (sp[i+1].resID == R.raw.intro_part_1)
+               a.add(la[i]);
+        }
+        return a;
     }
 }
 
