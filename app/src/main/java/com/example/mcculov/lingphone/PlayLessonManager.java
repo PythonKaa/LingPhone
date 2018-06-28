@@ -6,13 +6,31 @@ import android.media.MediaPlayer;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class PlayLessonManager {
+
+    interface OnLineChangeListener {
+        void lineChanged(int newLine);
+    }
 
     private MediaPlayer mp;
     MediaPlayer.OnCompletionListener cl;
+    OnLineChangeListener onLineChanger;
+    CourseDefinition courseDefinition;
+    private int currentIndex = -1;
+
+    private void onLineChangeCall(int newLine) {
+        if (onLineChanger != null)
+            onLineChanger.lineChanged(newLine);
+    }
+
+    public void setOnLineChangeListener(OnLineChangeListener l) {
+        onLineChanger = l;
+    }
 
     public PlayLessonManager() {
         this.mp = new MediaPlayer();
+        courseDefinition = TestCourseLoader.LoadCourseDef();
     }
 
     public void setResourceID(Context context, int resid) {
@@ -39,7 +57,27 @@ public class PlayLessonManager {
     }
 
     public int getCurrentPosition() {
-        return mp.getCurrentPosition();
+        int currentPosition = mp.getCurrentPosition();
+        checkCurrentPosition(currentPosition);
+        return currentPosition;
+    }
+
+    private void checkCurrentPosition(int currentPosition) {
+        int newIndex = getCurrentIndex(currentPosition);
+        if (newIndex != currentIndex) {
+            currentIndex = newIndex;
+            onLineChangeCall(newIndex);
+        }
+    }
+
+    private int getCurrentIndex(int position) {
+        int count = courseDefinition.mediaFiles.get(0).splittingPhraseStarts.size() - 1;
+        for (int i = 0; i < count; i++) {
+            int lineStart = courseDefinition.mediaFiles.get(0).splittingPhraseStarts.get(i+1);
+            if (position < lineStart)
+                return i;
+        }
+        return 0;
     }
 
     public int getDuration() {
@@ -63,22 +101,8 @@ public class PlayLessonManager {
     }
 
     public List<String> getText() {
-        CourseDefinition cd = TestCourseLoader.LoadCourseDef();
 
-        ArrayList<String> a = new ArrayList<String>();
-
-
-        CourseDefinition.SplittingPhrase sp[] = new CourseDefinition.SplittingPhrase[cd.splittingPhrases.size()];
-        cd.splittingPhrases.toArray(sp);
-
-        String la[] = new String[cd.foreignLang.phrases.size()];
-        la = cd.foreignLang.phrases.toArray(la);
-
-        for (int i = 0; i < cd.splittingPhrases.size()-1; i++) {
-           if (sp[i+1].resID == R.raw.intro_part_1)
-               a.add(la[i]);
-        }
-        return a;
+        return courseDefinition.mediaFiles.get(0).srcLang.phrases;
     }
 }
 

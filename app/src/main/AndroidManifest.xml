@@ -17,7 +17,6 @@
             </intent-filter>
         </activity>
         <!--<activity android:name=".PlayActivity"></activity>-->
-        <!--<activity android:name=".Menu" />-->
 
     </application>
 

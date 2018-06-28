@@ -4,43 +4,48 @@ import java.util.ArrayList;
 
 public class CourseDefinition {
 
-    public CourseDefinition() {
-        mediaFileIDs = new ArrayList<Integer>();
-        splittingPhrases = new ArrayList<SplittingPhrase>();
-        splittingParts = new ArrayList<Integer>();
-        foreignLang = new DefsForLanguage();
-        nativeLang = new DefsForLanguage();
-    }
-
-    public class SplittingPhrase {
-        public int resID;
-        public int start;
-
-        public SplittingPhrase(int resID, int start) {
-            this.resID = resID;
-            this.start = start;
-        }
-    }
-
     public class DefsForLanguage {
+
+        public ArrayList<String> phrases;
+        public ArrayList<String> partNames;
 
         public DefsForLanguage() {
             phrases = new ArrayList<String>();
             partNames = new ArrayList<String>();
         }
-
-        public String CourseName;
-        public ArrayList<String> phrases;
-        public ArrayList<String> partNames;
     }
 
-    public ArrayList<Integer> mediaFileIDs;
-    public ArrayList<SplittingPhrase> splittingPhrases;
-    public ArrayList<Integer> splittingParts;
-    public DefsForLanguage foreignLang;
-    public DefsForLanguage nativeLang;
+    public class FileDefinition {
+        public int mediaFileID;
+        public ArrayList<Integer> splittingPhraseStarts;
+        public ArrayList<Integer> splittingParts;
+        public DefsForLanguage srcLang;
+        public DefsForLanguage nativeLang;
 
-    public void addSplittingPhrase(int resID, int start) {
-        splittingPhrases.add(new CourseDefinition.SplittingPhrase(resID, start));
+        public FileDefinition(int mediaFileID) {
+            this.mediaFileID = mediaFileID;
+
+            splittingParts = new ArrayList<Integer>();
+            splittingPhraseStarts = new ArrayList<Integer>();
+            srcLang = new DefsForLanguage();
+            nativeLang = new DefsForLanguage();
+        }
+    }
+
+    public ArrayList<FileDefinition> mediaFiles;
+    public String srcCourseName;
+    public String nativeCourseName;
+
+    public CourseDefinition() {
+        mediaFiles = new ArrayList<FileDefinition>();
+    }
+
+    public CourseDefinition(String courseName) {
+        mediaFiles = new ArrayList<FileDefinition>();
+        srcCourseName = courseName;
+    }
+
+    public FileDefinition createFileDefinition(int fileID) {
+        return new FileDefinition(fileID);
     }
 }

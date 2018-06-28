@@ -10,6 +10,7 @@ import android.util.TypedValue;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -44,6 +45,7 @@ public class PlayActivity extends LingActivity implements MediaPlayer.OnCompleti
         public int playPosition;
         public String lessonTitle;
         public boolean isPlay;
+        public int selectedLine;
     }
 
     private ActivityState activityState;
@@ -74,6 +76,7 @@ public class PlayActivity extends LingActivity implements MediaPlayer.OnCompleti
             activityState.lessonTitle = "Test lesson";
             activityState.playPosition = 0;
             activityState.isPlay = true;
+            activityState.selectedLine = -1;
         } else {
             activityState.restoreFromBundle(savedInstanceState);
         }
@@ -81,8 +84,9 @@ public class PlayActivity extends LingActivity implements MediaPlayer.OnCompleti
         //
         TableLayout textTable = (TableLayout) findViewById(R.id.TableLayout_Text);
 
+        int index = 0;
         for (String s : mp.getText()) {
-            addLessonLine(textTable, s);
+            addLessonLine(textTable, s, index++);
         }
 
         ImageView iv = (ImageView) findViewById(R.id.imageView);
@@ -91,6 +95,13 @@ public class PlayActivity extends LingActivity implements MediaPlayer.OnCompleti
 
         // By default play first lesson
         playLesson();
+
+        mp.setOnLineChangeListener(new PlayLessonManager.OnLineChangeListener() {
+            @Override
+            public void lineChanged(int newLine) {
+                setSelectedLine(newLine);
+            }
+        });
 
         /**
          * Play button click event
@@ -165,12 +176,12 @@ public class PlayActivity extends LingActivity implements MediaPlayer.OnCompleti
 
     }
 
-    private void addLessonLine(final TableLayout textTable, String value) {
+    private void addLessonLine(final TableLayout textTable, String value, int index) {
 
         final TableRow newRow = new TableRow(this);
 
-        int textColor = Color.WHITE; // R.color.lesson_text_color;
-        float textSize =  getResources().getDimension(R.dimen.text_size);
+        int textColor = Color.GRAY; // R.color.lesson_text_color;
+        float textSize = getResources().getDimension(R.dimen.text_size);
 
         TextView textView = new TextView(this);
 
@@ -178,9 +189,35 @@ public class PlayActivity extends LingActivity implements MediaPlayer.OnCompleti
         textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
         textView.setTextColor(textColor);
         textView.setText(value);
+        textView.setTag("Line #" + index);
 
         newRow.addView(textView);
         textTable.addView(newRow);
+    }
+
+    private void setSelectedLine(int lineNo) {
+        if (activityState.selectedLine != lineNo) {
+            if (activityState.selectedLine != -1) {
+                selectLine(activityState.selectedLine, false);
+            }
+            selectLine(lineNo, true);
+
+            activityState.selectedLine = lineNo;
+        }
+    }
+
+    private void selectLine(int lineNo, boolean select) {
+        TableLayout tl = (TableLayout) findViewById(R.id.TableLayout_Text);
+        TextView textView = (TextView) tl.findViewWithTag("Line #" + lineNo);
+
+        if (select) {
+            textView.setTextColor(Color.WHITE);
+            ScrollView sv = (ScrollView) findViewById(R.id.ScrollView_TextDemo);
+            TableRow tableRow = (TableRow)textView.getParent();
+            int newPosition = tableRow.getTop() - (sv.getHeight() - (tableRow.getBottom() - tableRow.getTop())) / 2;
+            sv.smoothScrollTo(0,  newPosition);
+        } else
+            textView.setTextColor(Color.GRAY);
     }
 
     @Override
