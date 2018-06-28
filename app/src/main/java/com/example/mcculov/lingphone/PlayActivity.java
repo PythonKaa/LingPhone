@@ -1,19 +1,22 @@
 package com.example.mcculov.lingphone;
 
+import android.graphics.Color;
 import android.media.MediaPlayer;
-import android.os.Handler;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.text.TextUtils;
+import android.util.TypedValue;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.SeekBar;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 
 
-public class PlayActivity extends LingActivity implements MediaPlayer.OnCompletionListener, SeekBar.OnSeekBarChangeListener/*, ListView.OnClickListener */{
+public class PlayActivity extends LingActivity implements MediaPlayer.OnCompletionListener, SeekBar.OnSeekBarChangeListener {
 
     private static final String MEDIA_TIME = "MEDIA_TIME";
     private static final String LESSON_TITLE = "LESSON_TITLE";
@@ -37,7 +40,7 @@ public class PlayActivity extends LingActivity implements MediaPlayer.OnCompleti
     private Handler mHandler = new Handler();
     private Utilities utils;
 
-    private class ActivityState extends SavedState{
+    private class ActivityState extends SavedState {
         public int playPosition;
         public String lessonTitle;
         public boolean isPlay;
@@ -75,20 +78,12 @@ public class PlayActivity extends LingActivity implements MediaPlayer.OnCompleti
             activityState.restoreFromBundle(savedInstanceState);
         }
 
-        // ListView
+        //
+        TableLayout textTable = (TableLayout) findViewById(R.id.TableLayout_Text);
 
-        ListView lv = (ListView)findViewById(R.id.lessonText);
-
-        ArrayAdapter<String> adapt = new ArrayAdapter<>(this, R.layout.playlist_item, mp.getText());
-
-        lv.setAdapter(adapt);
-
-        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
-            }
-        });
+        for (String s : mp.getText()) {
+            addLessonLine(textTable, s);
+        }
 
         ImageView iv = (ImageView) findViewById(R.id.imageView);
         iv.setVisibility(View.INVISIBLE);
@@ -108,16 +103,16 @@ public class PlayActivity extends LingActivity implements MediaPlayer.OnCompleti
             public void onClick(View arg0) {
                 // check for already playing
                 if (mp.isPlaying()) {
-                        mp.pause();
-                        activityState.isPlay = false;
-                        // Changing button image to play button
-                        btnPlay.setImageResource(R.drawable.btn_play);
+                    mp.pause();
+                    activityState.isPlay = false;
+                    // Changing button image to play button
+                    btnPlay.setImageResource(R.drawable.btn_play);
                 } else {
                     // Resume lesson
-                        mp.start();
-                        activityState.isPlay = true;
-                        // Changing button image to pause button
-                        btnPlay.setImageResource(R.drawable.btn_pause);
+                    mp.start();
+                    activityState.isPlay = true;
+                    // Changing button image to pause button
+                    btnPlay.setImageResource(R.drawable.btn_pause);
                 }
 
             }
@@ -170,6 +165,23 @@ public class PlayActivity extends LingActivity implements MediaPlayer.OnCompleti
 
     }
 
+    private void addLessonLine(final TableLayout textTable, String value) {
+
+        final TableRow newRow = new TableRow(this);
+
+        int textColor = Color.WHITE; // R.color.lesson_text_color;
+        float textSize =  getResources().getDimension(R.dimen.text_size);
+
+        TextView textView = new TextView(this);
+
+        textView.setMaxWidth(1);
+        textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
+        textView.setTextColor(textColor);
+        textView.setText(value);
+
+        newRow.addView(textView);
+        textTable.addView(newRow);
+    }
 
     @Override
     protected void onStart() {
