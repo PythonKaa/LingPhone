@@ -4,14 +4,31 @@ import java.util.ArrayList;
 
 public class CourseDefinition {
 
+    public ArrayList<FileDefinition> mediaFiles;
+    public String srcCourseName;
+    public String nativeCourseName;
+
+    public CourseDefinition() {
+        mediaFiles = new ArrayList<>();
+    }
+
+    public CourseDefinition(String courseName) {
+        this();
+        srcCourseName = courseName;
+    }
+
+    public FileDefinition createFileDefinition(int fileID) {
+        return new FileDefinition(fileID);
+    }
+
     public class DefsForLanguage {
 
         public ArrayList<String> phrases;
         public ArrayList<String> partNames;
 
         public DefsForLanguage() {
-            phrases = new ArrayList<String>();
-            partNames = new ArrayList<String>();
+            phrases = new ArrayList<>();
+            partNames = new ArrayList<>();
         }
     }
 
@@ -25,27 +42,41 @@ public class CourseDefinition {
         public FileDefinition(int mediaFileID) {
             this.mediaFileID = mediaFileID;
 
-            splittingParts = new ArrayList<Integer>();
-            splittingPhraseStarts = new ArrayList<Integer>();
+            splittingParts = new ArrayList<>();
+            splittingPhraseStarts = new ArrayList<>();
             srcLang = new DefsForLanguage();
             nativeLang = new DefsForLanguage();
         }
     }
 
-    public ArrayList<FileDefinition> mediaFiles;
-    public String srcCourseName;
-    public String nativeCourseName;
+    public Course createCourse() {
+        Course course = new Course(srcCourseName, nativeCourseName);
 
-    public CourseDefinition() {
-        mediaFiles = new ArrayList<FileDefinition>();
-    }
+        for (FileDefinition mf: mediaFiles) {
+                int currentPartIndex = 0;
+                int currentPartEnd = 0;
 
-    public CourseDefinition(String courseName) {
-        mediaFiles = new ArrayList<FileDefinition>();
-        srcCourseName = courseName;
-    }
+            for (int i = 0; i < mf.splittingParts.size(); i++) {
 
-    public FileDefinition createFileDefinition(int fileID) {
-        return new FileDefinition(fileID);
+                Lesson ls = new Lesson(mf.mediaFileID,
+                        mf.srcLang.partNames.get(i),
+                        mf.nativeLang.partNames.get(i));
+
+                if (currentPartIndex < mf.splittingParts.size() - 1)
+                    currentPartEnd = mf.splittingParts.get(i+1);
+                else
+                    currentPartEnd = mf.splittingPhraseStarts.size();
+
+                for (int j = mf.splittingParts.get(i); j < currentPartEnd; j++) {
+                    ls.addPhrase(
+                            mf.srcLang.phrases.get(j),
+                            mf.nativeLang.phrases.get(j),
+                            mf.splittingPhraseStarts.get(j),
+                            mf.splittingPhraseStarts.get(j+1));
+                }
+                course.lessons.add(ls);
+            }
+        }
+        return course;
     }
 }

@@ -4,18 +4,13 @@ import android.os.Bundle;
 
 import com.google.gson.Gson;
 
-import java.lang.reflect.Type;
-
 public final class PackerToBundle {
 
-
-    public <T> T restoreFromJSON(String json, Class<T> stateClass)
-    {
+    public <T> T restoreFromJSON(String json, Class<T> stateClass) {
         return new Gson().fromJson(json, stateClass);
     }
 
-    private <T> String getDescriptor(Class<T> stateClass)
-    {
+    private <T> String getDescriptor(Class<T> stateClass) {
         return "SAVE_" + stateClass.getSimpleName().toUpperCase();
     }
 
@@ -30,7 +25,5 @@ public final class PackerToBundle {
     public <T> T restoreFromBundle(Bundle in, Class<T> stateClass) {
         return restoreFromJSON(in.getString(getDescriptor(stateClass)), stateClass);
     }
-
-
 
 }

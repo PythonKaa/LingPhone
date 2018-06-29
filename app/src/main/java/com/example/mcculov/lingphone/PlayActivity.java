@@ -1,7 +1,6 @@
 package com.example.mcculov.lingphone;
 
 import android.graphics.Color;
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.TypedValue;
@@ -15,30 +14,46 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 
-public class PlayActivity extends LingActivity implements MediaPlayer.OnCompletionListener, SeekBar.OnSeekBarChangeListener {
+public class PlayActivity extends LingActivity implements IMPlayer.OnCompletePlayListener, SeekBar.OnSeekBarChangeListener {
 
     private static final int seekForwardTime = 5000; // 5000 milliseconds
     private static final int seekBackwardTime = 5000; // 5000 milliseconds
-
     private ImageButton btnPlay;
     private SeekBar lessonProgressBar;
     private TextView lessonTitleLabel;
     private TextView lessonCurrentDurationLabel;
     private TextView lessonTotalDurationLabel;
-    private PlayLessonManager mp;
+    private PlayLessonManager plm;
+    private MPlayer mp;
     // Handler to update UI timer, progress bar etc,.
     private Handler mHandler = new Handler();
     private Utilities utils;
     private PackerToBundle stateSaver;
-
-    private class ActivityState {
-        public int playPosition;
-        public String lessonTitle;
-        public boolean isPlay;
-        public int selectedLine;
-    }
-
     private ActivityState activityState;
+    /**
+     * Background Runnable thread
+     */
+    private Runnable mUpdateTimeTask = new Runnable() {
+
+        public void run() {
+            int totalDuration = mp.getDuration();
+            int currentDuration = mp.getCurrentPosition();
+            plm.setCurrentPosition(currentDuration);
+
+            // Displaying Total Duration time
+            lessonTotalDurationLabel.setText("" + utils.milliSecondsToTimer(totalDuration));
+            // Displaying time completed playing
+            lessonCurrentDurationLabel.setText("" + utils.milliSecondsToTimer(currentDuration));
+
+            // Updating progress bar
+            int progress = (int) (utils.getProgressPercentage(currentDuration, totalDuration));
+            //Log.d("Progress", ""+progress);
+            lessonProgressBar.setProgress(progress);
+
+            // Running this thread after 100 milliseconds
+            mHandler.postDelayed(this, 100);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,14 +69,15 @@ public class PlayActivity extends LingActivity implements MediaPlayer.OnCompleti
         lessonTotalDurationLabel = (TextView) findViewById(R.id.lessonTotalDurationLabel);
 
         // Mediaplayer
-        mp = new PlayLessonManager();
+        plm = new PlayLessonManager();
+        mp = new MPlayer();
         utils = new Utilities();
         stateSaver = new PackerToBundle();
 
 
         // Listeners
         lessonProgressBar.setOnSeekBarChangeListener(this);
-        mp.setOnCompletionListener(this);
+        mp.setOnCompletePlayListener(this);
 
         if (savedInstanceState == null) {
             activityState = new ActivityState();
@@ -77,7 +93,7 @@ public class PlayActivity extends LingActivity implements MediaPlayer.OnCompleti
         TableLayout textTable = (TableLayout) findViewById(R.id.TableLayout_Text);
 
         int index = 0;
-        for (String s : mp.getText()) {
+        for (String s : plm.getText()) {
             addLessonLine(textTable, s, index++);
         }
         selectLine(activityState.selectedLine, true); // только после того, как создали все строки
@@ -88,7 +104,7 @@ public class PlayActivity extends LingActivity implements MediaPlayer.OnCompleti
         // By default play first lesson
         playLesson();
 
-        mp.setOnLineChangeListener(new PlayLessonManager.OnLineChangeListener() {
+        plm.setOnLineChangeListener(new PlayLessonManager.OnLineChangeListener() {
             @Override
             public void lineChanged(int newLine) {
                 setSelectedLine(newLine);
@@ -112,7 +128,7 @@ public class PlayActivity extends LingActivity implements MediaPlayer.OnCompleti
                     btnPlay.setImageResource(R.drawable.btn_play);
                 } else {
                     // Resume lesson
-                    mp.start();
+                    mp.startPlay();
                     activityState.isPlay = true;
                     // Changing button image to pause button
                     btnPlay.setImageResource(R.drawable.btn_pause);
@@ -131,7 +147,7 @@ public class PlayActivity extends LingActivity implements MediaPlayer.OnCompleti
 
             @Override
             public void onClick(View arg0) {
-                // get current lesson position				
+                // get current lesson position
                 int currentPosition = mp.getCurrentPosition();
                 // check if seekForward time is lesser than lesson duration
                 if (currentPosition + seekForwardTime <= mp.getDuration()) {
@@ -153,7 +169,7 @@ public class PlayActivity extends LingActivity implements MediaPlayer.OnCompleti
 
             @Override
             public void onClick(View arg0) {
-                // get current lesson position				
+                // get current lesson position
                 int currentPosition = mp.getCurrentPosition();
                 // check if seekBackward time is greater than 0 sec
                 if (currentPosition - seekBackwardTime >= 0) {
@@ -204,9 +220,9 @@ public class PlayActivity extends LingActivity implements MediaPlayer.OnCompleti
             if (select) {
                 textView.setTextColor(Color.WHITE);
                 ScrollView sv = (ScrollView) findViewById(R.id.ScrollView_TextDemo);
-                TableRow tableRow = (TableRow)textView.getParent();
+                TableRow tableRow = (TableRow) textView.getParent();
                 int newPosition = tableRow.getTop() - (sv.getHeight() - (tableRow.getBottom() - tableRow.getTop())) / 2;
-                sv.smoothScrollTo(0,  newPosition);
+                sv.smoothScrollTo(0, newPosition);
             } else
                 textView.setTextColor(Color.GRAY);
         }
@@ -236,7 +252,7 @@ public class PlayActivity extends LingActivity implements MediaPlayer.OnCompleti
     protected void onResume() {
         super.onResume();
         if (activityState.isPlay)
-            mp.start();
+            mp.startPlay();
     }
 
     @Override
@@ -291,30 +307,6 @@ public class PlayActivity extends LingActivity implements MediaPlayer.OnCompleti
     }
 
     /**
-     * Background Runnable thread
-     */
-    private Runnable mUpdateTimeTask = new Runnable() {
-
-        public void run() {
-            long totalDuration = mp.getDuration();
-            long currentDuration = mp.getCurrentPosition();
-
-            // Displaying Total Duration time
-            lessonTotalDurationLabel.setText("" + utils.milliSecondsToTimer(totalDuration));
-            // Displaying time completed playing
-            lessonCurrentDurationLabel.setText("" + utils.milliSecondsToTimer(currentDuration));
-
-            // Updating progress bar
-            int progress = (int) (utils.getProgressPercentage(currentDuration, totalDuration));
-            //Log.d("Progress", ""+progress);
-            lessonProgressBar.setProgress(progress);
-
-            // Running this thread after 100 milliseconds
-            mHandler.postDelayed(this, 100);
-        }
-    };
-
-    /**
      *
      * */
     @Override
@@ -353,11 +345,21 @@ public class PlayActivity extends LingActivity implements MediaPlayer.OnCompleti
      * if shuffle is ON play random lesson
      */
     @Override
-    public void onCompletion(MediaPlayer arg0) {
-
+    public void onCompletePlay() {
         // repeat is on play same lesson again
         activityState.playPosition = 0;
         playLesson();
+    }
+
+    protected void finalize() {
+        mp.release();
+    }
+
+    private class ActivityState {
+        public int playPosition;
+        public String lessonTitle;
+        public boolean isPlay;
+        public int selectedLine;
     }
 
 
