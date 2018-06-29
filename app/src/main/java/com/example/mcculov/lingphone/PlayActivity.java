@@ -2,10 +2,8 @@ package com.example.mcculov.lingphone;
 
 import android.graphics.Color;
 import android.media.MediaPlayer;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.ImageButton;
@@ -19,17 +17,8 @@ import android.widget.TextView;
 
 public class PlayActivity extends LingActivity implements MediaPlayer.OnCompletionListener, SeekBar.OnSeekBarChangeListener {
 
-    private static final String MEDIA_TIME = "MEDIA_TIME";
-    private static final String LESSON_TITLE = "LESSON_TITLE";
-    private static final String IS_PLAY = "IS_PLAY";
-    private static final String ACTIVITY_STATE = "ACTIVITY_STATE";
-
     private static final int seekForwardTime = 5000; // 5000 milliseconds
     private static final int seekBackwardTime = 5000; // 5000 milliseconds
-
-//    private int playPosition = 0;
-//    private String lessonTitle;
-//    private boolean isPlay;
 
     private ImageButton btnPlay;
     private SeekBar lessonProgressBar;
@@ -40,8 +29,9 @@ public class PlayActivity extends LingActivity implements MediaPlayer.OnCompleti
     // Handler to update UI timer, progress bar etc,.
     private Handler mHandler = new Handler();
     private Utilities utils;
+    private PackerToBundle stateSaver;
 
-    private class ActivityState extends SavedState {
+    private class ActivityState {
         public int playPosition;
         public String lessonTitle;
         public boolean isPlay;
@@ -66,6 +56,8 @@ public class PlayActivity extends LingActivity implements MediaPlayer.OnCompleti
         // Mediaplayer
         mp = new PlayLessonManager();
         utils = new Utilities();
+        stateSaver = new PackerToBundle();
+
 
         // Listeners
         lessonProgressBar.setOnSeekBarChangeListener(this);
@@ -78,20 +70,20 @@ public class PlayActivity extends LingActivity implements MediaPlayer.OnCompleti
             activityState.isPlay = true;
             activityState.selectedLine = -1;
         } else {
-            activityState.restoreFromBundle(savedInstanceState);
+            activityState = stateSaver.restoreFromBundle(savedInstanceState, ActivityState.class);
         }
 
-        //
+
         TableLayout textTable = (TableLayout) findViewById(R.id.TableLayout_Text);
 
         int index = 0;
         for (String s : mp.getText()) {
             addLessonLine(textTable, s, index++);
         }
+        selectLine(activityState.selectedLine, true); // только после того, как создали все строки
 
         ImageView iv = (ImageView) findViewById(R.id.imageView);
         iv.setVisibility(View.INVISIBLE);
-
 
         // By default play first lesson
         playLesson();
@@ -197,9 +189,7 @@ public class PlayActivity extends LingActivity implements MediaPlayer.OnCompleti
 
     private void setSelectedLine(int lineNo) {
         if (activityState.selectedLine != lineNo) {
-            if (activityState.selectedLine != -1) {
-                selectLine(activityState.selectedLine, false);
-            }
+            selectLine(activityState.selectedLine, false);
             selectLine(lineNo, true);
 
             activityState.selectedLine = lineNo;
@@ -207,17 +197,20 @@ public class PlayActivity extends LingActivity implements MediaPlayer.OnCompleti
     }
 
     private void selectLine(int lineNo, boolean select) {
-        TableLayout tl = (TableLayout) findViewById(R.id.TableLayout_Text);
-        TextView textView = (TextView) tl.findViewWithTag("Line #" + lineNo);
+        if (lineNo != -1) {
+            TableLayout tl = (TableLayout) findViewById(R.id.TableLayout_Text);
+            TextView textView = (TextView) tl.findViewWithTag("Line #" + lineNo);
 
-        if (select) {
-            textView.setTextColor(Color.WHITE);
-            ScrollView sv = (ScrollView) findViewById(R.id.ScrollView_TextDemo);
-            TableRow tableRow = (TableRow)textView.getParent();
-            int newPosition = tableRow.getTop() - (sv.getHeight() - (tableRow.getBottom() - tableRow.getTop())) / 2;
-            sv.smoothScrollTo(0,  newPosition);
-        } else
-            textView.setTextColor(Color.GRAY);
+            if (select) {
+                textView.setTextColor(Color.WHITE);
+                ScrollView sv = (ScrollView) findViewById(R.id.ScrollView_TextDemo);
+                TableRow tableRow = (TableRow)textView.getParent();
+                int newPosition = tableRow.getTop() - (sv.getHeight() - (tableRow.getBottom() - tableRow.getTop())) / 2;
+                sv.smoothScrollTo(0,  newPosition);
+            } else
+                textView.setTextColor(Color.GRAY);
+        }
+
     }
 
     @Override
@@ -255,7 +248,8 @@ public class PlayActivity extends LingActivity implements MediaPlayer.OnCompleti
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        activityState.saveToBundle(outState);
+        activityState.playPosition = mp.getCurrentPosition();
+        stateSaver.saveToBundle(outState, activityState);
     }
 
     public void playLesson() {
@@ -362,6 +356,7 @@ public class PlayActivity extends LingActivity implements MediaPlayer.OnCompleti
     public void onCompletion(MediaPlayer arg0) {
 
         // repeat is on play same lesson again
+        activityState.playPosition = 0;
         playLesson();
     }
 
