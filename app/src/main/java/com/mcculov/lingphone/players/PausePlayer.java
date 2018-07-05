@@ -1,21 +1,13 @@
-package com.example.mcculov.lingphone;
+package com.mcculov.lingphone.players;
 
-public class PausePlayer extends AbstactPlayer {
+public class PausePlayer extends AbstractPlayer {
 
     private int currentTime = 0;
     private boolean isPlaying = false;
 
     @Override
     protected void updateTask() {
-        if (isPlaying()) {
-            if (currentTime + DELTA >= endTime) {
-                stopPlay();
-                callOnComplete();
-                currentTime = endTime;
-            } else {
-                currentTime = currentTime + DELTA;
-            }
-        }
+        currentTime = currentTime + DELTA;
     }
 
     @Override
@@ -35,12 +27,6 @@ public class PausePlayer extends AbstactPlayer {
         return isPlaying;
     }
 
-    @Override
-    public void play(int from, int to) {
-        super.play(from, to);
-        currentTime = startTime;
-        startPlay();
-    }
 
     @Override
     public int getCurrentPosition() {
@@ -49,11 +35,15 @@ public class PausePlayer extends AbstactPlayer {
 
     @Override
     public int getDuration() {
-        return endTime - startTime;
+        return getEndTime() - getStartTime();
     }
 
     @Override
     public void seekTo(int msec) {
+        if (msec >= getEndTime())
+            msec = getEndTime() - 1;
+        if (msec < getStartTime())
+            msec = getStartTime();
         currentTime = msec;
     }
 

@@ -1,4 +1,9 @@
-package com.example.mcculov.lingphone;
+package com.mcculov.lingphone;
+
+import android.util.Log;
+
+import com.mcculov.lingphone.courses.CourseDefinition;
+import com.google.gson.Gson;
 
 public class TestCourseLoader {
 
@@ -9,7 +14,7 @@ public class TestCourseLoader {
         cd.srcCourseName = "English (basic)";
         cd.nativeCourseName = "Курс английского языка";
 
-        CourseDefinition.FileDefinition fd = cd.createFileDefinition(R.raw.intro_part_1);
+        CourseDefinition.FileDefinition fd = cd.createFileDefinition("intro_part_1.mp3");
 
         fd.splittingPhraseStarts.add( 2500);   //0
         fd.splittingPhraseStarts.add( 4000);
@@ -61,11 +66,13 @@ public class TestCourseLoader {
 
         cd.mediaFiles.add(fd);
 
-        fd = cd.createFileDefinition(R.raw.intro_part_2);
+        fd = cd.createFileDefinition("intro_part_2.mp3");
 
+        fd.splittingPhraseStarts.add( 0);
         fd.splittingPhraseStarts.add( 2100);
         fd.splittingPhraseStarts.add( 3800);
         fd.splittingPhraseStarts.add( 6000);
+        fd.splittingPhraseStarts.add( 7800);
         fd.splittingPhraseStarts.add( 9800);
         fd.splittingPhraseStarts.add( 11500);
         fd.splittingPhraseStarts.add( 14100);
@@ -80,7 +87,6 @@ public class TestCourseLoader {
         fd.splittingPhraseStarts.add( 34500);
         fd.splittingPhraseStarts.add( 36800);
         fd.splittingPhraseStarts.add( 39100);   //30
-        fd.splittingPhraseStarts.add( 40600);
         fd.splittingPhraseStarts.add( 42200);
         fd.splittingPhraseStarts.add( 44000);
         fd.splittingPhraseStarts.add( 45600);
@@ -138,6 +144,8 @@ public class TestCourseLoader {
         fd.srcLang.phrases.add("It's on the table.");
 
         cd.mediaFiles.add(fd);
+
+        Log.i("TEST_DATA", new Gson().toJson(cd));
 
         return cd;
     }

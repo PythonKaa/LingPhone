@@ -1,7 +1,6 @@
-package com.example.mcculov.lingphone;
+package com.mcculov.lingphone.Activities;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -9,6 +8,8 @@ import android.view.animation.LayoutAnimationController;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+
+import com.example.mcculov.lingphone.R;
 
 public class Splash extends LingActivity {
 

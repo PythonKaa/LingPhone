@@ -1,9 +1,11 @@
-package com.example.mcculov.lingphone;
+package com.mcculov.lingphone.players;
 
-import android.content.Context;
 import android.media.MediaPlayer;
 
-public class MPlayer extends AbstactPlayer implements IMPlayer, MediaPlayer.OnCompletionListener {
+import java.io.FileDescriptor;
+import java.io.IOException;
+
+public class MPlayer extends AbstractPlayer implements IMPlayer, MediaPlayer.OnCompletionListener {
 
     private MediaPlayer mp;
     private MediaPlayer.OnCompletionListener listener;
@@ -13,15 +15,9 @@ public class MPlayer extends AbstactPlayer implements IMPlayer, MediaPlayer.OnCo
         mp.setOnCompletionListener(this);
     }
 
-    public void setResourceID(Context context, int resid) {
-        mp.reset();
-        mp = MediaPlayer.create(context, resid);
-        mp.setOnCompletionListener(this);
-    }
-
     @Override
     public void onCompletion(MediaPlayer arg0) {
-        callOnComplete();
+        callOnCompletePlay();
     }
 
     @Override
@@ -42,10 +38,25 @@ public class MPlayer extends AbstactPlayer implements IMPlayer, MediaPlayer.OnCo
     }
 
     @Override
-    public void play(int from, int to) {
-        super.play(from, to);
-        mp.seekTo(from);
-        startPlay();
+    public void setDataSource(String fileName) throws IOException {
+        if (mp.isPlaying())
+            mp.reset();
+        mp.setDataSource(fileName);
+        mp.prepare();
+        mp.setOnCompletionListener(this);
+        setStartTime(0);
+        setEndTime(mp.getDuration());
+    }
+
+    @Override
+    public void setDataSource(FileDescriptor fd, long offset, long length) throws IOException {
+        if (mp.isPlaying())
+            mp.reset();
+        mp.setDataSource(fd, offset, length);
+        mp.prepare();
+        mp.setOnCompletionListener(this);
+        setStartTime(0);
+        setEndTime(mp.getDuration());
     }
 
     @Override
@@ -69,9 +80,4 @@ public class MPlayer extends AbstactPlayer implements IMPlayer, MediaPlayer.OnCo
         mp.release();
     }
 
-    @Override
-    public void reset() {
-        super.reset();
-        mp.reset();
-    }
 }

@@ -1,4 +1,4 @@
-package com.example.mcculov.lingphone;
+package com.mcculov.lingphone.courses;
 
 import java.util.ArrayList;
 

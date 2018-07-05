@@ -11,4 +11,21 @@
     <string name="setting_menu_hint">Preferences</string>
     <string name="play_menu_hint">Play</string>
     <string name="pause_menu_hint">Pause</string>
+    <string name="mediaPlayerName">Media</string>
+    <string name="pausePlayerName">Pause</string>
+    <string name="do_you_want_repeat_exercise">Do you want repeat exercise?</string>
+    <string name="repeat_exercise">Repeat</string>
+    <string name="pass_exercise">Pass</string>
+    <string name="method_title">Select methods</string>
+    <string name="method_text_options">Text</string>
+    <string name="method_sound_options">Sound</string>
+    <string name="method_no_text">Without text</string>
+    <string name="method_source_text">With source text</string>
+    <string name="method_native_text">With native text</string>
+    <string name="method_simple_listen">Simple listen</string>
+    <string name="method_pause_before">Pause before actor</string>
+    <string name="method_pause_after">Pause ater actor</string>
+    <string name="method_record_before">Record you before actor</string>
+    <string name="method_record_after">Record you after actor</string>
+    <string name="error_set_source_file">Can\'t open file</string>
 </resources>

@@ -1,25 +1,31 @@
-package com.example.mcculov.lingphone;
+package com.mcculov.lingphone.players;
 
 import android.os.Handler;
 
-class AbstactPlayer implements IMPlayer {
+import java.io.FileDescriptor;
+import java.io.IOException;
+
+public class AbstractPlayer implements IMPlayer {
 
     protected static final int DELTA = 100;
-    protected int startTime = 0;
-    protected int endTime = 0;
+    private int startTime = 0;
+    private int endTime = 0;
     private Handler mHandler = new Handler();
     private OnCompletePlayListener onCompletePlayListener;
     private Runnable mUpdateTimeTask = new Runnable() {
 
         public void run() {
             updateTask();
-            mHandler.postDelayed(this, DELTA);
+            if (getCurrentPosition() > endTime) {
+                stopPlay();
+                callOnCompletePlay();
+            }
+            else
+               mHandler.postDelayed(this, DELTA);
         }
     };
 
-    protected void updateTask() {
-
-    }
+    protected void updateTask() { }
 
     protected void stopPlay() {
         mHandler.removeCallbacks(mUpdateTimeTask);
@@ -29,8 +35,27 @@ class AbstactPlayer implements IMPlayer {
         mHandler.postDelayed(mUpdateTimeTask, DELTA);
     }
 
+    @Override
+    public int getStartTime() {
+        return startTime;
+    }
 
-    protected void callOnComplete() {
+    @Override
+    public void setStartTime(int startTime) {
+        this.startTime = startTime;
+    }
+
+    @Override
+    public int getEndTime() {
+        return endTime;
+    }
+
+    @Override
+    public void setEndTime(int endTime) {
+        this.endTime = endTime;
+    }
+
+    protected void callOnCompletePlay() {
         if (onCompletePlayListener != null)
             onCompletePlayListener.onCompletePlay();
     }
@@ -56,15 +81,6 @@ class AbstactPlayer implements IMPlayer {
     }
 
     @Override
-    public void play(int from, int to) {
-        if (to < from)
-            throw new IllegalArgumentException("called play(from, to) => to < from");
-
-        startTime = from;
-        endTime = to;
-    }
-
-    @Override
     public int getCurrentPosition() {
         throw new UnsupportedOperationException();
     }
@@ -80,12 +96,14 @@ class AbstactPlayer implements IMPlayer {
     }
 
     @Override
+    public void setDataSource(String fileName)  throws IOException {}
+
+    @Override
+    public void setDataSource(FileDescriptor fd, long offset, long length) throws IOException {}
+
+    @Override
     public void release() {
         mHandler.removeCallbacks(mUpdateTimeTask);
     }
 
-    @Override
-    public void reset() {
-        mHandler.removeCallbacks(mUpdateTimeTask);
-    }
 }

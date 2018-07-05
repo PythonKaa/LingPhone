@@ -3,10 +3,4 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:shape="rectangle">
-
-  <gradient
-      android:angle="270"
-      android:centerColor="#3c4044"
-      android:endColor="#2e3136"
-      android:startColor="#484c4f" />
 </shape>

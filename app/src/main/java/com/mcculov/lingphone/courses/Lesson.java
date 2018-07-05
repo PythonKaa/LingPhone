@@ -1,18 +1,23 @@
-package com.example.mcculov.lingphone;
+package com.mcculov.lingphone.courses;
 
 import java.util.ArrayList;
 
 public class Lesson {
 
-    private int mediaID;
+    private String mediaFileName;
     private String srcName;
     private String nativeName;
+
+    public ArrayList<LessonPhrase> getPhrases() {
+        return phrases;
+    }
+
     private ArrayList<LessonPhrase> phrases;
 
-    public Lesson(int mediaID, String srcName, String nativeName) {
+    public Lesson(String mediaFileName, String srcName, String nativeName) {
         this.srcName = srcName;
         this.nativeName = nativeName;
-        this.mediaID = mediaID;
+        this.mediaFileName = mediaFileName;
         phrases = new ArrayList<>();
     }
 
@@ -24,8 +29,8 @@ public class Lesson {
         return nativeName;
     }
 
-    public int getMediaID() {
-        return mediaID;
+    public String getMediaFileName() {
+        return mediaFileName;
     }
 
     public void addPhrase(String srcText, String nativeText, int from, int to) {
@@ -57,7 +62,7 @@ public class Lesson {
         return -1;
     }
 
-    private class LessonPhrase {
+    public class LessonPhrase {
         public String srcText;
         public String nativeText;
         public int from;

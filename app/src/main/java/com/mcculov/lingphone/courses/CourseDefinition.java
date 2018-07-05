@@ -1,4 +1,4 @@
-package com.example.mcculov.lingphone;
+package com.mcculov.lingphone.courses;
 
 import java.util.ArrayList;
 
@@ -17,8 +17,8 @@ public class CourseDefinition {
         srcCourseName = courseName;
     }
 
-    public FileDefinition createFileDefinition(int fileID) {
-        return new FileDefinition(fileID);
+    public FileDefinition createFileDefinition(String fileName) {
+        return new FileDefinition(fileName);
     }
 
     public class DefsForLanguage {
@@ -33,14 +33,14 @@ public class CourseDefinition {
     }
 
     public class FileDefinition {
-        public int mediaFileID;
+        public String mediaFileName;
         public ArrayList<Integer> splittingPhraseStarts;
         public ArrayList<Integer> splittingParts;
         public DefsForLanguage srcLang;
         public DefsForLanguage nativeLang;
 
-        public FileDefinition(int mediaFileID) {
-            this.mediaFileID = mediaFileID;
+        public FileDefinition(String mediaFileName) {
+            this.mediaFileName = mediaFileName;
 
             splittingParts = new ArrayList<>();
             splittingPhraseStarts = new ArrayList<>();
@@ -58,14 +58,14 @@ public class CourseDefinition {
 
             for (int i = 0; i < mf.splittingParts.size(); i++) {
 
-                Lesson ls = new Lesson(mf.mediaFileID,
+                Lesson ls = new Lesson(mf.mediaFileName,
                         mf.srcLang.partNames.get(i),
                         mf.nativeLang.partNames.get(i));
 
                 if (currentPartIndex < mf.splittingParts.size() - 1)
                     currentPartEnd = mf.splittingParts.get(i+1);
                 else
-                    currentPartEnd = mf.splittingPhraseStarts.size();
+                    currentPartEnd = mf.splittingPhraseStarts.size() - 1;
 
                 for (int j = mf.splittingParts.get(i); j < currentPartEnd; j++) {
                     ls.addPhrase(
