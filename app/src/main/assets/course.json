@@ -1,0 +1,157 @@
+{
+  "srcCourseName" : "English (basic)",
+  "nativeCourseName" : "Курс английского языка",
+  "mediaFiles" : [
+    {
+      "splittingPhraseStarts" : [
+        2500,
+        4000,
+        5700,
+        7300,
+        9500,
+        11900,
+        13800,
+        15700,
+        17900,
+        20200,
+        23000,
+        25900,
+        28100,
+        30200
+      ],
+      "nativeLang" : {
+        "phrases" : [
+          "ВВЕДЕНИЕ",
+          "Часть 1.",
+          "Здравствуйте.",
+          "Слушайте, пожалуйста.",
+          "Я мистер Лейкер.",
+          "Я англичанин.",
+          "Я учитель.",
+          "Вы учащийся.",
+          "Вы не англичанин.",
+          "Я говорю по-английски.",
+          "Вы изучаете английский язык.",
+          "Это книга.",
+          "Это кассета."
+        ],
+        "partNames" : [
+          "ВВЕДЕНИЕ. Часть 1"
+        ]
+      },
+      "splittingParts" : [
+        0
+      ],
+      "mediaFileName" : "Intro Part 1.mp3",
+      "srcLang" : {
+        "phrases" : [
+          "INTRODUCTION",
+          "Part One.",
+          "Hello.",
+          "Listen, please.",
+          "I'm Mr. Laker.",
+          "I'm English.",
+          "I'm a teacher.",
+          "You're student.",
+          "You aren't  English.",
+          "I'm speaking English.",
+          "You're learning English.",
+          "This is a book.",
+          "This is a cassette."
+        ],
+        "partNames" : [
+          "INTRODUCTION Part 1"
+        ]
+      }
+    },
+    {
+      "splittingPhraseStarts" : [
+        0,
+        2100,
+        3800,
+        6000,
+        7800,
+        9800,
+        11500,
+        14100,
+        16200,
+        18300,
+        20300,
+        22600,
+        25200,
+        27300,
+        29400,
+        32200,
+        34500,
+        36800,
+        39100,
+        42200,
+        44000,
+        45600,
+        47300
+      ],
+      "nativeLang" : {
+        "phrases" : [
+          "Часть 2.",
+          "Здравствуйте!",
+          "Здравствуйте, мистер Лейкер.",
+          "Как Вы поживаете?",
+          "Очень хорошо.",
+          "Как Вы поживаете?",
+          "Очень хорошо, спасибо.",
+          "Вы учащийся?",
+          "Да.",
+          "Вы англичанин?",
+          "Нет.",
+          "Вы изучаете английский язык?",
+          "Да.",
+          "У Вас есть книга?",
+          "Да, у меня есть книга.",
+          "Это французская книга?",
+          "Нет.",
+          "Это английская книга.",
+          "Хорошо. Где она?",
+          "Вот она.",
+          "Где?",
+          "Она на столе."
+        ],
+        "partNames" : [
+          "ВВЕДЕНИЕ. Часть 2"
+        ]
+      },
+      "splittingParts" : [
+        0
+      ],
+      "mediaFileName" : "Intro Part 2.mp3",
+      "srcLang" : {
+        "phrases" : [
+          "Part Two.",
+          "Hello!",
+          "Hello, Mr. Laker.",
+          "How are you?",
+          "I'm very well.",
+          "How are you?",
+          "I'm very well, thank you.",
+          "Are you a student?",
+          "Yes, I am.",
+          "Are you English?",
+          "No, I'm not.",
+          "Are you learning English?",
+          "Yes, I am.",
+          "Have you got a book?",
+          "Yes I've got a book.",
+          "Is it the French book?",
+          "No, it isn't.",
+          "It's the English book.",
+          "Good. Where is it?",
+          "Here it is.",
+          "Where?",
+          "It's on the table."
+        ],
+        "partNames" : [
+          "INTRODUCTION Part 2"
+        ]
+      }
+    }
+  ]
+}
